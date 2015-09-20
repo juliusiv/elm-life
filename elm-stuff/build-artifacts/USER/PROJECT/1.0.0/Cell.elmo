@@ -1,0 +1,78 @@
+Elm.Cell = Elm.Cell || {};
+Elm.Cell.make = function (_elm) {
+   "use strict";
+   _elm.Cell = _elm.Cell || {};
+   if (_elm.Cell.values)
+   return _elm.Cell.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Cell",
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var update = F2(function (action,
+   model) {
+      return function () {
+         switch (action.ctor)
+         {case "Click":
+            return _U.replace([["alive"
+                               ,A2($Debug.log,
+                               "Alive",
+                               $Basics.not(model.alive))]],
+              model);}
+         _U.badCase($moduleName,
+         "between lines 29 and 32");
+      }();
+   });
+   var Click = {ctor: "Click"};
+   var view = F2(function (address,
+   model) {
+      return function () {
+         var cellStyle = $Html$Attributes.style(_L.fromArray([{ctor: "_Tuple2"
+                                                              ,_0: "width"
+                                                              ,_1: "20px"}
+                                                             ,{ctor: "_Tuple2"
+                                                              ,_0: "height"
+                                                              ,_1: "20px"}
+                                                             ,{ctor: "_Tuple2"
+                                                              ,_0: "border"
+                                                              ,_1: "1px solid black"}
+                                                             ,{ctor: "_Tuple2"
+                                                              ,_0: "float"
+                                                              ,_1: "left"}
+                                                             ,{ctor: "_Tuple2"
+                                                              ,_0: "background-color"
+                                                              ,_1: model.alive ? "blue" : "white"}]));
+         return A2($Html.div,
+         _L.fromArray([cellStyle
+                      ,A2($Html$Events.onClick,
+                      address,
+                      Click)]),
+         _L.fromArray([]));
+      }();
+   });
+   var init = function (id) {
+      return {_: {}
+             ,alive: false
+             ,id: id};
+   };
+   var Model = F2(function (a,b) {
+      return {_: {}
+             ,alive: a
+             ,id: b};
+   });
+   _elm.Cell.values = {_op: _op
+                      ,init: init
+                      ,update: update
+                      ,view: view
+                      ,Model: Model};
+   return _elm.Cell.values;
+};
