@@ -29,7 +29,7 @@ Elm.Cell.make = function (_elm) {
                                $Basics.not(model.alive))]],
               model);}
          _U.badCase($moduleName,
-         "between lines 29 and 32");
+         "between lines 26 and 27");
       }();
    });
    var Click = {ctor: "Click"};

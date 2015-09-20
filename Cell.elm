@@ -2,16 +2,14 @@ module Cell (Action, Model, ID, init, update, view) where
 
 import Color exposing (..)
 import Debug exposing (log)
-import Graphics.Collage exposing (..)
-import Graphics.Element exposing (..)
-import Html exposing (..)
+import Html exposing (div)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
 
 -- MODEL
 type alias Model = {
   alive : Bool,
-  id : ID
+  id    : ID
 }
 
 type alias ID = Int
@@ -22,17 +20,14 @@ init id =
 
 -- UPDATE
 type Action = Click
---type Action = Born | Die
 
 update : Action -> Model -> Model
 update action model =
   case action of
     Click -> { model | alive <- (log "Alive" (not model.alive)) }
-    --Born -> { model | alive <- (log "Alive" True) }
-    --Die  -> { model | alive <- (log "Alive" False) }
 
 -- VIEW
-view : Signal.Address Action -> Model -> Html
+view : Signal.Address Action -> Model -> Html.Html
 view address model =
   let
     cellStyle = 
@@ -45,4 +40,3 @@ view address model =
         ]
   in
   div [cellStyle, onClick address Click] []
-  --square 20 |> outlined (solid black)
