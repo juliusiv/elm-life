@@ -1,10 +1,12 @@
-module Cell (Action, Model, init, update, view) where
+module Cell (Action, Model, init, update, view, size) where
 
 import Color exposing (..)
 import Debug exposing (log)
 import Html exposing (div)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
+
+size = 15
 
 -- MODEL
 type alias Model = {
@@ -29,10 +31,11 @@ update action model =
 view : Signal.Address Action -> Model -> Html.Html
 view address model =
   let
+    dim = "px" |> (++) (toString size)
     cellStyle = 
       style
-        [ ("width", "20px")
-        , ("height", "20px")
+        [ ("width", dim)
+        , ("height", dim)
         , ("border", "1px solid black")
         , ("float", "left")
         , ("background-color", if model.alive then "#60B5CC" else "white")

@@ -10,8 +10,7 @@ import Set exposing (filter, foldl, fromList, member, toList, union)
 --import Time exposing (fps)
 --import Window
 
-numCells = 20
-cellSize = 20
+numCells = 40
 
 -- MODEL
 type alias Model = List Cell.Model
@@ -99,8 +98,8 @@ getNeighbors (x, y) =
 view : Signal.Address Action -> Model -> Html
 view address model =
   let
-    width = "px" |> (++) (toString ((cellSize+2)*numCells))
-    rowStyle = style [("width", width)]
+    dim = "px" |> (++) (toString ((Cell.size+2)*numCells))
+    rowStyle = style [("width", dim)]
   in
   div []
     [ div [rowStyle] (List.map (viewCell address) model)
