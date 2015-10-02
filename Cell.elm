@@ -1,4 +1,4 @@
-module Cell (Action, Model, ID, init, update, view) where
+module Cell (Action, Model, init, update, view) where
 
 import Color exposing (..)
 import Debug exposing (log)
@@ -9,14 +9,13 @@ import Html.Events exposing (onClick)
 -- MODEL
 type alias Model = {
   alive : Bool,
-  id    : ID
+  x     : Int,
+  y     : Int
 }
 
-type alias ID = Int
-
-init : Int -> Model
-init id =
-  { alive = False, id = id }
+init : Bool -> Int -> Int -> Model
+init alive x y =
+  { alive = alive, x = x, y = y }
 
 -- UPDATE
 type Action = Click
@@ -36,7 +35,7 @@ view address model =
         , ("height", "20px")
         , ("border", "1px solid black")
         , ("float", "left")
-        , ("background-color", if model.alive then "blue" else "white")
+        , ("background-color", if model.alive then "#60B5CC" else "white")
         ]
   in
   div [cellStyle, onClick address Click] []

@@ -1,4 +1,4 @@
-import Environment exposing (init, update, view)
+import World exposing (init, update, view)
 
 import StartApp.Simple exposing (start)
 
