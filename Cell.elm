@@ -1,7 +1,10 @@
-module Cell (Action, Model, init, update, view, size) where
+module Cell exposing (Model, Msg(..), init, update, view, size)
+
+import Styles exposing (cell)
 
 import Color exposing (..)
 import Debug exposing (log)
+import Html exposing (..)
 import Html exposing (div)
 import Html.Attributes exposing (style)
 import Html.Events exposing (onClick)
@@ -20,25 +23,14 @@ init alive x y =
   { alive = alive, x = x, y = y }
 
 -- UPDATE
-type Action = Click
+type Msg = Click
 
-update : Action -> Model -> Model
-update action model =
-  case action of
-    Click -> { model | alive <- (log "Alive" (not model.alive)) }
+update : Msg -> Model -> Model
+update msg model =
+  case msg of
+    Click -> { model | alive = (log "Alive" (not model.alive)) }
 
 -- VIEW
-view : Signal.Address Action -> Model -> Html.Html
-view address model =
-  let
-    dim = "px" |> (++) (toString size)
-    cellStyle = 
-      style
-        [ ("width", dim)
-        , ("height", dim)
-        , ("border", "1px solid black")
-        , ("float", "left")
-        , ("background-color", if model.alive then "#60B5CC" else "white")
-        ]
-  in
-  div [cellStyle, onClick address Click] []
+view : Model -> Html Msg
+view model =
+  div [(Styles.cell size model.alive), onClick Click] []
