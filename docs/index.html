@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Basic Page Needs -->
+  <meta charset="utf-8">
+  <title>elm-life</title>
+
+  <!-- Mobile Specific Metas -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="description" content="Conway's Game of Life in Elm">
+  <meta name="author" content="Julius Alexander IV">
+
+</head>
+
+
+<body>
+  <div id="container">
+    <div id="elm-life"></div>
+  </div>
+
+  <script type="text/javascript" src="app.js"></script>
+  <script type="text/javascript">
+    var node = document.getElementById('elm-life');
+    var app = Elm.Main.embed(node);
+  </script>
+</body>
+</html>
+
