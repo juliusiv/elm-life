@@ -5,21 +5,26 @@ import Styles
 import Array exposing (Array)
 import Array2D exposing (Array2D)
 import Dict
-import Html exposing (Html, div, button, text)
-import Html.Attributes exposing (src, style)
-import Html.Events exposing (onClick, onMouseOver)
+import Html exposing (Html, button, div, input, text)
+import Html.Attributes as Attributes exposing (src, style)
+import Html.Events exposing (onClick, onInput, onMouseOver)
 import Mouse
 import Set exposing (Set)
-import Time exposing (Time, second)
+import String exposing (toInt)
+import Time exposing (Time, millisecond)
 
 numCells = 35
 cellSize = 15
+minSpeed = 1000.0
+maxSpeed = 100.0
 
 -- MODEL
 type alias Model = 
   { cells : Array2D Bool
   , isRunning : Bool
   , isMouseDown : Bool
+  , lastUpdate : Float
+  , msBetweenUpdates : Float
   }
 
 init : (Model, Cmd Msg)
@@ -27,6 +32,8 @@ init =
   ( { cells = Array2D.repeat numCells numCells False
     , isRunning = False
     , isMouseDown = False
+    , lastUpdate = 0.0
+    , msBetweenUpdates = minSpeed
     }, Cmd.none)
 
 
@@ -34,6 +41,7 @@ init =
 type Msg =
   Toggle Int Int
   | Tick Time
+  | ChangeSpeed String
   | AdvanceGeneration
   | Start
   | MouseDown Mouse.Position
@@ -43,11 +51,19 @@ type Msg =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
-    Tick _ ->
+    Tick time ->
       if not model.isRunning then
         (model, Cmd.none)
+      else if time >= (model.lastUpdate + model.msBetweenUpdates) then
+        update AdvanceGeneration {model | lastUpdate = time}
       else
-        update AdvanceGeneration model
+        (model, Cmd.none)
+
+    ChangeSpeed msString ->
+      let
+        newSpeed = String.toFloat msString |> Result.withDefault minSpeed
+      in
+        ({model | msBetweenUpdates = newSpeed}, Cmd.none)
 
     Toggle x y ->
       let
@@ -153,7 +169,7 @@ getNeighborPositions x y =
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-    [ Time.every second Tick
+    [ Time.every millisecond Tick
     , Mouse.downs MouseDown
     , Mouse.ups MouseUp
     ]
@@ -168,6 +184,13 @@ view model =
         [ button [onClick (AdvanceGeneration)] [text "Advance Generation"]
         , button [onClick Start] [text "Run Life"]
         , button [onClick Pause] [text "Pause Life"]
+        , input
+            [ Attributes.type' "range"
+            , Attributes.min <| toString maxSpeed
+            , Attributes.max <| toString minSpeed
+            , Attributes.value <| toString model.msBetweenUpdates
+            , onInput ChangeSpeed
+            ] []
         ]
     ]
 

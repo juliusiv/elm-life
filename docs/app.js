@@ -9145,6 +9145,8 @@ var _JuliusAlexanderIV$elm_life$Life$calculateNewGeneration = function (cells) {
 			}),
 		cells);
 };
+var _JuliusAlexanderIV$elm_life$Life$maxSpeed = 100.0;
+var _JuliusAlexanderIV$elm_life$Life$minSpeed = 1000.0;
 var _JuliusAlexanderIV$elm_life$Life$cellSize = 15;
 var _JuliusAlexanderIV$elm_life$Life$numCells = 35;
 var _JuliusAlexanderIV$elm_life$Life$init = {
@@ -9152,13 +9154,15 @@ var _JuliusAlexanderIV$elm_life$Life$init = {
 	_0: {
 		cells: A3(_tortus$elm_array_2d$Array2D$repeat, _JuliusAlexanderIV$elm_life$Life$numCells, _JuliusAlexanderIV$elm_life$Life$numCells, false),
 		isRunning: false,
-		isMouseDown: false
+		isMouseDown: false,
+		lastUpdate: 0.0,
+		msBetweenUpdates: _JuliusAlexanderIV$elm_life$Life$minSpeed
 	},
 	_1: _elm_lang$core$Platform_Cmd$none
 };
-var _JuliusAlexanderIV$elm_life$Life$Model = F3(
-	function (a, b, c) {
-		return {cells: a, isRunning: b, isMouseDown: c};
+var _JuliusAlexanderIV$elm_life$Life$Model = F5(
+	function (a, b, c, d, e) {
+		return {cells: a, isRunning: b, isMouseDown: c, lastUpdate: d, msBetweenUpdates: e};
 	});
 var _JuliusAlexanderIV$elm_life$Life$Pause = {ctor: 'Pause'};
 var _JuliusAlexanderIV$elm_life$Life$MouseUp = function (a) {
@@ -9176,26 +9180,45 @@ var _JuliusAlexanderIV$elm_life$Life$update = F2(
 			var _p11 = msg;
 			switch (_p11.ctor) {
 				case 'Tick':
+					var _p12 = _p11._0;
 					if (_elm_lang$core$Basics$not(model.isRunning)) {
 						return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 					} else {
-						var _v6 = _JuliusAlexanderIV$elm_life$Life$AdvanceGeneration,
-							_v7 = model;
-						msg = _v6;
-						model = _v7;
-						continue update;
+						if (_elm_lang$core$Native_Utils.cmp(_p12, model.lastUpdate + model.msBetweenUpdates) > -1) {
+							var _v6 = _JuliusAlexanderIV$elm_life$Life$AdvanceGeneration,
+								_v7 = _elm_lang$core$Native_Utils.update(
+								model,
+								{lastUpdate: _p12});
+							msg = _v6;
+							model = _v7;
+							continue update;
+						} else {
+							return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+						}
 					}
+				case 'ChangeSpeed':
+					var newSpeed = A2(
+						_elm_lang$core$Result$withDefault,
+						_JuliusAlexanderIV$elm_life$Life$minSpeed,
+						_elm_lang$core$String$toFloat(_p11._0));
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{msBetweenUpdates: newSpeed}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
 				case 'Toggle':
-					var _p14 = _p11._1;
-					var _p13 = _p11._0;
-					var maybCellState = A3(_tortus$elm_array_2d$Array2D$get, _p13, _p14, model.cells);
-					var _p12 = maybCellState;
-					if (_p12.ctor === 'Just') {
+					var _p15 = _p11._1;
+					var _p14 = _p11._0;
+					var maybCellState = A3(_tortus$elm_array_2d$Array2D$get, _p14, _p15, model.cells);
+					var _p13 = maybCellState;
+					if (_p13.ctor === 'Just') {
 						var newCells = A4(
 							_tortus$elm_array_2d$Array2D$set,
-							_p13,
 							_p14,
-							A2(_elm_lang$core$Basics$xor, _p12._0, model.isMouseDown),
+							_p15,
+							A2(_elm_lang$core$Basics$xor, _p13._0, model.isMouseDown),
 							model.cells);
 						return {
 							ctor: '_Tuple2',
@@ -9252,6 +9275,9 @@ var _JuliusAlexanderIV$elm_life$Life$update = F2(
 			}
 		}
 	});
+var _JuliusAlexanderIV$elm_life$Life$ChangeSpeed = function (a) {
+	return {ctor: 'ChangeSpeed', _0: a};
+};
 var _JuliusAlexanderIV$elm_life$Life$Tick = function (a) {
 	return {ctor: 'Tick', _0: a};
 };
@@ -9259,7 +9285,7 @@ var _JuliusAlexanderIV$elm_life$Life$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				A2(_elm_lang$core$Time$every, _elm_lang$core$Time$second, _JuliusAlexanderIV$elm_life$Life$Tick),
+				A2(_elm_lang$core$Time$every, _elm_lang$core$Time$millisecond, _JuliusAlexanderIV$elm_life$Life$Tick),
 				_elm_lang$mouse$Mouse$downs(_JuliusAlexanderIV$elm_life$Life$MouseDown),
 				_elm_lang$mouse$Mouse$ups(_JuliusAlexanderIV$elm_life$Life$MouseUp)
 			]));
@@ -9291,9 +9317,9 @@ var _JuliusAlexanderIV$elm_life$Life$viewRow = function (row) {
 		_elm_lang$core$Array$toList(
 			A2(
 				_elm_lang$core$Array$map,
-				function (_p15) {
-					var _p16 = _p15;
-					return A3(_JuliusAlexanderIV$elm_life$Life$viewCell, _p16._0, _p16._1, _p16._2);
+				function (_p16) {
+					var _p17 = _p16;
+					return A3(_JuliusAlexanderIV$elm_life$Life$viewCell, _p17._0, _p17._1, _p17._2);
 				},
 				row)));
 };
@@ -9377,7 +9403,22 @@ var _JuliusAlexanderIV$elm_life$Life$view = function (model) {
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html$text('Pause Life')
-							]))
+							])),
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('range'),
+								_elm_lang$html$Html_Attributes$min(
+								_elm_lang$core$Basics$toString(_JuliusAlexanderIV$elm_life$Life$maxSpeed)),
+								_elm_lang$html$Html_Attributes$max(
+								_elm_lang$core$Basics$toString(_JuliusAlexanderIV$elm_life$Life$minSpeed)),
+								_elm_lang$html$Html_Attributes$value(
+								_elm_lang$core$Basics$toString(model.msBetweenUpdates)),
+								_elm_lang$html$Html_Events$onInput(_JuliusAlexanderIV$elm_life$Life$ChangeSpeed)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
 					]))
 			]));
 };
