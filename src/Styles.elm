@@ -21,6 +21,7 @@ cell size alive =
       , ("border", "1px solid black")
       , ("float", "left")
       , ("background-color", if alive then blue else "white")
+      , ("cursor", "default")
       ]
 
 buttonGreen =

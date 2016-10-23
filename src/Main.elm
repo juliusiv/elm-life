@@ -1,5 +1,4 @@
---module ElmLife where
-import World exposing (init, update, view, subscriptions)
+import Life exposing (init, update, view, subscriptions)
 
 import Html.App as App
 
